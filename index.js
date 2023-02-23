@@ -11,7 +11,7 @@ import messageRouter from './routes/messagesRoute.js';
 import dotenv from 'dotenv';
 import fileUpload from 'express-fileupload';
 import { Server } from 'socket.io';
-import { sockets } from './sockets/socket.js'; 
+// import { sockets } from './sockets/socket.js'; 
 
 dotenv.config();
 
@@ -26,7 +26,7 @@ app.use(fileUpload({
 }))
 
 const corsOptions = {
-  origin: 'https://clinquant-medovik-138bc2.netlify.app',
+  origin: 'https://bfitpro.netlify.app',
   credentials: true,
   // optionSuccessStatus: 200,
 };
@@ -55,7 +55,7 @@ try {
 const io = new Server(server, {
   pingTimeout: 60000,
   cors: {
-    origin: ["https://clinquant-medovik-138bc2.netlify.app"],
+    origin: ["https://bfitpro.netlify.app"],
     credentials: true,
     // methods: ["GET", "POST"]
   }
