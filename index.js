@@ -28,7 +28,7 @@ app.use(fileUpload({
 const corsOptions = {
   origin: 'https://clinquant-medovik-138bc2.netlify.app',
   credentials: true,
-  optionSuccessStatus: 200,
+  // optionSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
 
@@ -56,7 +56,7 @@ const io = new Server(server, {
   pingTimeout: 60000,
   cors: {
     origin: ["https://clinquant-medovik-138bc2.netlify.app"],
-    cors: true,
+    credentials: true,
     // methods: ["GET", "POST"]
   }
 });
