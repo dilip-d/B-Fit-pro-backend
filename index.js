@@ -26,7 +26,7 @@ app.use(fileUpload({
 }))
 
 const corsOptions = {
-  origin: 'http://localhost:3000',
+  origin: 'https://clinquant-medovik-138bc2.netlify.app',
   credentials: true,
   optionSuccessStatus: 200,
 };
@@ -55,7 +55,7 @@ try {
 const io = new Server(server, {
   pingTimeout: 60000,
   cors: {
-    origin: ["http://localhost:3000"],
+    origin: ["https://clinquant-medovik-138bc2.netlify.app"],
     cors: true,
     // methods: ["GET", "POST"]
   }
