@@ -49,19 +49,19 @@ export const signup = async (req, res) => {
     }
 };
 
+const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    auth: {
+        user: process.env.AUTH_EMAIL,
+        pass: process.env.PASS
+    }
+});
+
 const sendOTPVerificationEmail = async (result, res) => {
     try {
         const otp = `${Math.floor(1000 + Math.random() * 9000)}`;
-
-        const transporter = nodemailer.createTransport({
-            host: "smtp.gmail.com",
-            port: 587,
-            secure: false,
-            auth: {
-                user: process.env.AUTH_EMAIL,
-                pass: process.env.PASS
-            }
-        });
 
         //hash the otp
         const saltRounds = 10
@@ -199,6 +199,95 @@ export const signin = async (req, res) => {
         console.log(error);
     }
 }
+
+export const sendPassResetLink = async (req, res) => {
+    try {
+        const email = req.body.email;
+        console.log(email);
+
+        if (!email)
+            return res.json({ error: "Empty user details are not allowed" })
+
+        const oldUser = await User.findOne({ email });
+
+        if (!oldUser)
+            return res.json({ error: "User doesn't exist" })
+
+        const token = jwt.sign({ _id: oldUser._id }, process.env.CLIENTJWT_SECRET, {
+            expiresIn: '1d'
+        })
+
+        const setUserToken = await User.findByIdAndUpdate({ _id: oldUser._id }, { verifyToken: token }, { new: true })
+
+        if (setUserToken) {
+            const mailOptions = {
+                from: "dili.d61296@gmail.com",
+                to: email,
+                subject: "B-Fit Pro Reset Password Link",
+                text: `This Link Valid for 2 minutes https://bfitpro.netlify.app/enterPassword/${oldUser._id}/${setUserToken.verifyToken}`
+            };
+
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    console.log('error', error);
+                    res.json({ error: 'Email not send' })
+                } else {
+                    console.log('Email sent', info.response);
+                    res.json({ status: true, message: 'Email sent successfully' })
+                }
+            })
+        }
+    }
+    catch (error) {
+        res.json({ error: error.message, })
+    }
+}
+
+export const verifyUser = async (req, res) => {
+    try {
+        const { id, token } = req.params;
+
+        const validUser = await User.findOne({ _id: id, verifyToken: token });
+
+        const verifyTheToken = jwt.verify(token, process.env.CLIENTJWT_SECRET);
+
+        if (validUser && verifyTheToken._id) {
+            res.json({ status: true, validUser })
+        } else {
+            res.json({ error: 'User doesn,t exist' })
+        }
+    }
+    catch (error) {
+        res.json({ error: error.message, })
+    }
+}
+
+export const changePassword = async (req, res) => {
+    try {
+        const { id, token } = req.params;
+        const { password } = req.body;
+
+        const validUser = await User.findOne({ _id: id, verifyToken: token });
+
+        const verifyTheToken = jwt.verify(token, process.env.CLIENTJWT_SECRET);
+
+        if (validUser && verifyTheToken._id) {
+            const newPassword = await bcrypt.hash(password, 12)
+
+            const setNewUserPass = await User.findByIdAndUpdate({ _id: id }, { password: newPassword }, { new: true })
+
+            setNewUserPass.save();
+
+            res.json({ status: true, setNewUserPass })
+        } else {
+            res.json({ error: 'User does not exist' })
+        }
+    }
+    catch (error) {
+        res.json({ error: error.message, })
+    }
+}
+
 
 export const trainerList = async (req, res) => {
     try {

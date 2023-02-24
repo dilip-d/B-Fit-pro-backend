@@ -11,7 +11,6 @@ import messageRouter from './routes/messagesRoute.js';
 import dotenv from 'dotenv';
 import fileUpload from 'express-fileupload';
 import { Server } from 'socket.io';
-// import { sockets } from './sockets/socket.js'; 
 
 dotenv.config();
 
@@ -28,11 +27,8 @@ app.use(fileUpload({
 const corsOptions = {
   origin: 'https://bfitpro.netlify.app',
   credentials: true,
-  // optionSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
-
-// app.use(express.static(path.join(__dirname, '../client/build')));
 
 app.use('/', userRouter);
 app.use('/admin', adminRouter)
@@ -57,11 +53,8 @@ const io = new Server(server, {
   cors: {
     origin: ["https://bfitpro.netlify.app"],
     credentials: true,
-    // methods: ["GET", "POST"]
   }
 });
-
-// io.on('connection', sockets);
 
 // to create socketId according t email incoming
 const emailToSocketMapping = new Map();

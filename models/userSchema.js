@@ -39,7 +39,6 @@ const UserSchema = mongoose.Schema({
         trim: true,
         required: [true, 'Please enter an email'],
         unique: true,
-        // validate: [ true,'Please enter a valid email']
     },
     phone: {
         type: Number,
@@ -87,7 +86,20 @@ const UserSchema = mongoose.Schema({
     bookedSlots: [{
         type: Date,
         required: true
-    }]
+    }],
+    token: [
+        {
+            token: {
+                type: String,
+                required: true
+            }
+        }
+
+    ],
+    verifyToken: {
+        type: String
+    }
+
 }, { timestamps: true })
 
 const userSchema = mongoose.model('User', UserSchema)
