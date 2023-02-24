@@ -239,7 +239,7 @@ export const sendPassResetLink = async (req, res) => {
         }
     }
     catch (error) {
-        res.json({ error: error.message, })
+        res.json({ error: 'User does not exist', })
     }
 }
 
