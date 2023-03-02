@@ -6,15 +6,12 @@ export const postConversation = async (req, res) => {
     const userId = req.body.userid;
     const trainerId = req.body.trainerId;
     try {
-        // Check if a conversation already exists between the two members
         const existingConversation = await Conversation.findOne({
             members: { $all: [userId, trainerId] }
         });
         if (existingConversation) {
-            // If a conversation already exists, return it and do not create a new one
             res.status(200).json(existingConversation);
         } else {
-            // If no conversation exists, create a new conversation
             const newConversation = new Conversation({
                 members: [userId, trainerId]
             });

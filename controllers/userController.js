@@ -22,29 +22,27 @@ export const signup = async (req, res) => {
     const { fname, lname, dob, gender, email, phone, password, weight, height } = req.body
     try {
         const oldUser = await User.findOne({ email });
-        const extphone = await User.findOne({ phone });
 
-        if (oldUser !== null && extphone !== null) {
-            return res.json({ status: 'error', error: "User already exists" })
-        } else {
-            const hashedPassword = await bcrypt.hash(password, 12);
+        if (oldUser !== null)
+            return res.json({ error: "User already exists !" })
 
-            const result = await User.create({
-                fname,
-                lname,
-                dob,
-                gender,
-                weight,
-                height,
-                email,
-                phone,
-                password: hashedPassword,
-            })
+        const hashedPassword = await bcrypt.hash(password, 12);
 
-            await sendOTPVerificationEmail(result, res)
-        }
+        const result = await User.create({
+            fname,
+            lname,
+            dob,
+            gender,
+            weight,
+            height,
+            email,
+            phone,
+            password: hashedPassword,
+        })
+
+        await sendOTPVerificationEmail(result, res)
     } catch (error) {
-        res.status(500).json({ message: 'Something went wrong' })
+        res.status(500).json({ error: 'Something went wrong' })
         console.log(error);
     }
 };
@@ -77,24 +75,31 @@ const sendOTPVerificationEmail = async (result, res) => {
         //save the otp record
         await newOTPVerification.save()
 
-        await transporter.sendMail({
+        const mailOptions = {
             from: "dili.d61296@gmail.com",
             to: result.email,
             subject: "B-Fit Pro Email Verification",
             html: `<p>Enter ${otp} in the app to verify your email address and complete the sign up</p><p>This OTP <b>expires in 1 hour</b>.</p>`
-        });
+        }
 
-        res.json({
-            status: "pending",
-            send: "Verification otp email sent",
-            data: {
-                userId: result._id,
-                email: result.email,
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log('error', error);
+                res.json({ error: 'Email not send' })
+            } else {
+                res.json({
+                    status: "pending",
+                    send: "Verification OTP email sent !",
+                    data: {
+                        userId: result._id,
+                        email: result.email,
+                    }
+                })
             }
         })
     }
     catch (error) {
-        res.json({ status: "FAILED", message: error.message, })
+        res.json({ error: 'Something went wrong' })
     }
 }
 
@@ -203,7 +208,6 @@ export const signin = async (req, res) => {
 export const sendPassResetLink = async (req, res) => {
     try {
         const email = req.body.email;
-        console.log(email);
 
         if (!email)
             return res.json({ error: "Empty user details are not allowed" })
@@ -224,7 +228,7 @@ export const sendPassResetLink = async (req, res) => {
                 from: "dili.d61296@gmail.com",
                 to: email,
                 subject: "B-Fit Pro Reset Password Link",
-                text: `This Link Valid for 2 minutes https://bfitpro.netlify.app/enterPassword/${oldUser._id}/${setUserToken.verifyToken}`
+                text: `This Link Valid for 2 minutes http://localhost:3000/enterPassword/${oldUser._id}/${setUserToken.verifyToken}`
             };
 
             transporter.sendMail(mailOptions, (error, info) => {
@@ -288,10 +292,9 @@ export const changePassword = async (req, res) => {
     }
 }
 
-
 export const trainerList = async (req, res) => {
     try {
-        const trainer = await Trainer.find({ isVerified: true })
+        const trainer = await Trainer.find({ isVerified: true, price: { $ne: null } });
         res.json(trainer)
     } catch (err) {
         console.log(err);

@@ -5,14 +5,13 @@ const AdminSchema = mongoose.Schema({
     email: {
         type: String,
         trim: true,
-        required: [true, 'Please enter an email'],
+        required: true,
         unique: true,
     },
     password: {
         type: String,
         trim: true,
-        required: [true, 'Please enter a password'],
-        minLength: [3, 'Minimum password length is 3 characters']
+        required: true
     },
 }, { timestamps: true })
 

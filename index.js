@@ -11,7 +11,6 @@ import messageRouter from './routes/messagesRoute.js';
 import dotenv from 'dotenv';
 import fileUpload from 'express-fileupload';
 import { Server } from 'socket.io';
-// import { sockets } from './sockets/socket.js';
 
 const app = express();
 dotenv.config();
@@ -56,8 +55,6 @@ const io = new Server(server, {
   }
 });
 
-// io.on('connection', sockets);
-
 let users = [];
 
 const adduser = (userId, socketId) => {
@@ -96,60 +93,4 @@ io.on("connection", (socket) => {
     io.emit("getUsers", users)
   })
 
-  // socket.emit('me', socket.id);
-  // socket.on("addUserVideo", (userId) => {
-  //   adduser(userId, socket.id)
-  //   io.emit("getUserVideo", videoUsers)
-  // })
-  // console.log(' video socket connected');
-
-  // socket.on('disconnectCall', () => {
-  //   socket.broadcast.emit('callEnded');
-  // })
-
-  // socket.on('callUser', (data ) => {
-  //   console.log('logging caller',data);
-  // console.log(userToCall);
-  // console.log(signalData);
-  // console.log(from);
-  // console.log(name);
-
-  // io.to(userToCall).emit("callUser", {
-  //   signal: signalData,
-  //   from,
-  //   name,
-  // });
-  // });
-
-  // socket.on('answerCall', (data) => {
-  //   io.to(data.to).emit('callAccepted', data.signal);
-  // })
-
 });
-
-  // to create socketId according to email incoming
-  // const emailToSocketMapping = new Map();
-  // const socketToEmailMapping = new Map();
-  //   socket.on("join-room", (data) => {
-  //     const { userid } = data;
-  //     console.log("User", userid, "Joined Room");
-  //     emailToSocketMapping.set(userid, socket.id);
-  //     socketToEmailMapping.set(socket.id, userid);
-  //     socket.join(userid);
-  //     socket.emit("joined-room", { userid });
-  //     console.log('joineddddd');
-  //     socket.broadcast.to(userid).emit("user-joined", { userid });
-  //   });
-
-  //   socket.on("call-user", (data) => {
-  //     const { emailId, offer } = data;
-  //     const fromEmail = socketToEmailMapping.get(socket.id);
-  //     const socketId = emailToSocketMapping.get(emailId);
-  //     socket.to(socketId).emit('incoming-call', { from: fromEmail, offer });
-  //   });
-
-  //   socket.on("call-accepted", (data) => {
-  //     const { emailId, ans } = data;
-  //     const socketId = emailToSocketMapping.get(emailId);
-  //     socket.to(socketId).emit("call-accepted", { ans })
-  //   });

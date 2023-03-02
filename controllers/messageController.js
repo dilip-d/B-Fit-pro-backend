@@ -2,7 +2,6 @@ import message from "../models/messageSchema.js"
 
 export const postMessage = async (req, res) => {
     const newMessage = new message(req.body)
-
     try {
         const savedMessage = await newMessage.save();
         res.status(200).json(savedMessage)

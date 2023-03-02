@@ -4,14 +4,12 @@ const TrainerSchema = mongoose.Schema({
     fname: {
         type: String,
         trim: true,
-        required: [true, 'Please enter first name'],
-        minLength: [2, 'Name is too short!']
+        required: true
     },
     lname: {
         type: String,
         trim: true,
-        required: [true, 'Please enter last name '],
-        minLength: 1
+        required: true
     },
     dob: {
         type: String,
@@ -25,26 +23,17 @@ const TrainerSchema = mongoose.Schema({
     email: {
         type: String,
         trim: true,
-        required: [true, 'Please enter an email'],
-        unique: true,
+        required: true,
     },
     phone: {
         type: Number,
         trim: true,
-        required: [true, 'Please enter the phone number'],
-        minLength: 10,
-        validate: {
-            validator: function (v) {
-                return /^[0-9]{10}/.test(v);
-            },
-            message: '{VALUE} is not a valid 10 digit number!'
-        }
+        required: true,
     },
     password: {
         type: String,
         trim: true,
-        required: [true, 'Please enter a password'],
-        minLength: [3, 'Minimum password length is 3 characters']
+        required: true
     },
     isBlocked: {
         type: Boolean,
@@ -61,17 +50,17 @@ const TrainerSchema = mongoose.Schema({
     }],
     profileImage: {
         type: String,
-        default: 'null',
+        default: null,
         required: true
     },
     certificateImage: {
         type: String,
-        dafault: 'null',
+        dafault: null,
         required: true
     },
     link: {
         type: String,
-        default: 'null',
+        default: null,
         required: true
     },
     isVerified: {

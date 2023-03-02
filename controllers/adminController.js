@@ -8,7 +8,6 @@ import bookingModel from '../models/bookingSchema.js'
 
 dotenv.config();
 
-//admin
 export const adminSignup = async (req, res) => {
     const { email, password } = req.body
     try {
@@ -54,7 +53,6 @@ export const adminSignin = async (req, res) => {
     }
 }
 
-//user
 export const userInfo = async (req, res) => {
     try {
         const users = await User.find();
@@ -87,7 +85,6 @@ export const unblockUser = async (req, res) => {
     }
 }
 
-//trainer
 export const activeTrainerInfo = async (req, res) => {
     try {
         const trainers = await Trainer.find({ isVerified: true });

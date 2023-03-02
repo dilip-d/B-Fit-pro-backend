@@ -23,40 +23,38 @@ export const trainerSignup = async (req, res) => {
 
         const profileImage = req.body.file1
         const certificateImage = req.body.file2
-
+        console.log('in signnn');
         const oldTrainer = await Trainer.findOne({ email: values.email });
-        const extphone = await Trainer.findOne({ phone: values.phone });
 
-        if (oldTrainer !== null && extphone !== null) {
-            return res.json({ status: 'error', error: "Duplicate phone number" })
-        } else {
-            const hashedPassword = await bcrypt.hash(values.password, 12);
+        if (oldTrainer !== null)
+            return res.json({ error: "Trainer already exists !" })
 
-            const file1 = await cloudinary.uploader.upload(profileImage, {
-                folder: "trainers"
-            })
+        const hashedPassword = await bcrypt.hash(values.password, 12);
 
-            const file2 = await cloudinary.uploader.upload(certificateImage, {
-                folder: 'certificates'
-            })
+        const file1 = await cloudinary.uploader.upload(profileImage, {
+            folder: "trainers"
+        })
 
-            const result = await Trainer.create({
-                fname: values.fname,
-                lname: values.lname,
-                dob: values.dob,
-                gender: values.gender,
-                email: values.email,
-                phone: values.phone,
-                password: hashedPassword,
-                profileImage: file1.url,
-                certificateImage: file2.url,
-                link: values.link
-            })
-            const token = jwt.sign({ email: result.email, id: result._id }, process.env.TRAINERJWT_SECRET, { expiresIn: "1d" });
-            res.json({ status: 'success' });
-        }
+        const file2 = await cloudinary.uploader.upload(certificateImage, {
+            folder: 'certificates'
+        })
+
+        const result = await Trainer.create({
+            fname: values.fname,
+            lname: values.lname,
+            dob: values.dob,
+            gender: values.gender,
+            email: values.email,
+            phone: values.phone,
+            password: hashedPassword,
+            profileImage: file1.url,
+            certificateImage: file2.url,
+            link: values.link
+        })
+        const token = jwt.sign({ email: result.email, id: result._id }, process.env.TRAINERJWT_SECRET, { expiresIn: "1d" });
+        res.json({ status: 'Successfully done' });
     } catch (error) {
-        res.status(500).json({ message: 'Something went wrong' })
+        res.status(500).json({ error: 'Something went wrong' })
         console.log(error);
     }
 };
@@ -223,7 +221,7 @@ export const deleteService = async (req, res) => {
     try {
         const Id = req.params.id;
         await Trainer.updateOne({ _id: Id }, { $pull: { service: req.body.item } });
-        res.json({status: true});
+        res.json({ status: true });
     } catch (err) {
         console.log(err);
         res.json({ error: 'Internal Server Error !' });
@@ -234,7 +232,7 @@ export const deleteTips = async (req, res) => {
     try {
         const Id = req.params.id;
         await Trainer.updateOne({ _id: Id }, { $pull: { tips: req.body.item } });
-        res.json({status: true});
+        res.json({ status: true });
     } catch (err) {
         console.log(err);
         res.json({ error: 'Internal Server Error !' });
