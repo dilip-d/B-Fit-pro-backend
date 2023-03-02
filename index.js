@@ -52,15 +52,11 @@ const io = new Server(server, {
   pingTimeout: 60000,
   cors: {
     origin: "https://bfitpro.netlify.app",
-    credentials: true,
+    cors: true,
   }
 });
 
 // io.on('connection', sockets);
-
-// to create socketId according to email incoming
-// const emailToSocketMapping = new Map();
-// const socketToEmailMapping = new Map();
 
 let users = [];
 
@@ -80,7 +76,6 @@ const removeUser = (socketId) => {
 io.on("connection", (socket) => {
   console.log("Socket Connected");
 
-  // take userid and socketid from the user
   socket.on("addUser", (userId) => {
     adduser(userId, socket.id)
     io.emit("getUsers", users)
@@ -100,8 +95,41 @@ io.on("connection", (socket) => {
     removeUser(socket.id)
     io.emit("getUsers", users)
   })
+
+  // socket.emit('me', socket.id);
+  // socket.on("addUserVideo", (userId) => {
+  //   adduser(userId, socket.id)
+  //   io.emit("getUserVideo", videoUsers)
+  // })
+  // console.log(' video socket connected');
+
+  // socket.on('disconnectCall', () => {
+  //   socket.broadcast.emit('callEnded');
+  // })
+
+  // socket.on('callUser', (data ) => {
+  //   console.log('logging caller',data);
+  // console.log(userToCall);
+  // console.log(signalData);
+  // console.log(from);
+  // console.log(name);
+
+  // io.to(userToCall).emit("callUser", {
+  //   signal: signalData,
+  //   from,
+  //   name,
+  // });
+  // });
+
+  // socket.on('answerCall', (data) => {
+  //   io.to(data.to).emit('callAccepted', data.signal);
+  // })
+
 });
 
+  // to create socketId according to email incoming
+  // const emailToSocketMapping = new Map();
+  // const socketToEmailMapping = new Map();
   //   socket.on("join-room", (data) => {
   //     const { userid } = data;
   //     console.log("User", userid, "Joined Room");
@@ -125,36 +153,3 @@ io.on("connection", (socket) => {
   //     const socketId = emailToSocketMapping.get(emailId);
   //     socket.to(socketId).emit("call-accepted", { ans })
   //   });
-
-
-
-//connecting with an event & event listener
-// io.on('connection', (socket) => {
-//   socket.emit('me', socket.id);
-//   console.log('socket connected');
-
-//   socket.on('disconnect', () => {
-//     socket.broadcast.emit('callEnded');
-//   })
-
-//   socket.on('callUser', ({ userToCall, signalData, from, name }) => {
-//     console.log(userToCall);
-//     console.log(signalData);
-//     console.log(from);
-//     console.log(name);
-
-//     userSchema.findOne({ email: from}).then((user) => {
-//       console.log(user);
-//       io.to(user.socketId).emit("callUser", {
-//         signal: signalData,
-//         from,
-//         name,
-//       });
-//     });
-//   });
-//     // io.to(userToCall).emit('callUser', { signal: signalData, from, name })
-//   // })
-
-//   socket.on('answerCall', (data) => {
-//     io.to(data.to).emit('callAccepted', data.signal);
-//   })
