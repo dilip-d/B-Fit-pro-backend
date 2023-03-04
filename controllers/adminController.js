@@ -31,7 +31,6 @@ export const adminSignup = async (req, res) => {
 };
 
 export const adminSignin = async (req, res) => {
-    console.log('in admin signin');
     try {
         const { email, password } = req.body;
         const oldAdmin = await Admin.findOne({ email });
@@ -44,7 +43,7 @@ export const adminSignin = async (req, res) => {
         if (!isPasswordCorrect)
             return res.status(400).json({ message: "Invalid Credentials" })
 
-        const toke = jwt.sign({ email: oldAdmin.email, id: oldAdmin._id }, process.env.ADMINJWT_SECRET, { expiresIn: "1d" });
+        const toke = jwt.sign({ email: oldAdmin.email, id: oldAdmin._id }, process.env.ADMINJWT_SECRET, { expiresIn: "5h" });
 
         res.status(200).json({ token: toke, status: 'Login success', admin: oldAdmin })
     } catch (error) {
@@ -203,7 +202,6 @@ export const getAllDetails = async (req, res) => {
             createdAtDates = result.map(item => item.createdAt);
             res.json({ numUsers, numTrainers, numBookings, bookingTotal, totalAmounts, createdAtDates, bookingDetails });
         });
-
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Server error' });

@@ -47,6 +47,7 @@ export const trainerSignup = async (req, res) => {
             email: values.email,
             phone: values.phone,
             password: hashedPassword,
+            price: values.charge,
             profileImage: file1.url,
             certificateImage: file2.url,
             link: values.link
@@ -76,7 +77,7 @@ export const trainerLogin = async (req, res) => {
         if (!isPasswordCorrect)
             return res.status(400).json({ message: "Invalid Credentials" })
 
-        const toke = jwt.sign({ name: oldTrainer.fname, email: oldTrainer.email, id: oldTrainer._id }, process.env.TRAINERJWT_SECRET, { expiresIn: "1d" });
+        const toke = jwt.sign({ name: oldTrainer.fname, email: oldTrainer.email, id: oldTrainer._id }, process.env.TRAINERJWT_SECRET, { expiresIn: "5h" });
 
         res.status(200).json({ token: toke, status: 'Login success', trainer: oldTrainer })
 

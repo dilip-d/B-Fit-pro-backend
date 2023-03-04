@@ -37,6 +37,7 @@ export const adminProtect = AsyncHandler(async (req, res, next) => {
 
 export const clientProtect = AsyncHandler(async (req, res, next) => {
   let token;
+  console.log('auth', req.headers.authorization);
 
   if (
     req.headers.authorization &&
@@ -46,6 +47,7 @@ export const clientProtect = AsyncHandler(async (req, res, next) => {
       token = req.headers.authorization.split(' ')[1];
 
       const decoded = jwt.verify(token, process.env.CLIENTJWT_SECRET);
+      req.body.userId = decoded.id;
 
       await User.findById(decoded.id);
 
